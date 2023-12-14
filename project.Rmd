@@ -1,0 +1,885 @@
+---
+title: "568Project"
+author: "Reetom Gangopadhyay"
+date: "2023-11-29"
+output: pdf_document
+---
+
+
+
+```{r data}
+
+## subject 1
+data1a <- read.table('data/subj1a.txt', header = FALSE)
+data1b <- read.table('data/subj1b.txt',header = FALSE)
+
+## subject 2
+data2a <- read.table('data/subj2a.txt', header = FALSE)
+data2b <- read.table('data/subj2b.txt',header = FALSE)
+
+## subject 3
+data3a <- read.table('data/subj3a.txt', header = FALSE)
+data3b <- read.table('data/subj3b.txt',header = FALSE)
+
+## subject 4
+data4a <- read.table('data/subj4a.txt', header = FALSE)
+data4b <- read.table('data/subj4b.txt',header = FALSE)
+
+```
+
+
+
+```{r visuals 1a}
+
+plot(data1a$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (1a)")
+
+hist(data1a$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (1a)")
+
+library(ggplot2)
+ggplot(data1a, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (1a)")
+
+plot(data1b$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (1b)")
+
+hist(data1b$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (1b)")
+
+library(ggplot2)
+ggplot(data1b, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (1b)")
+
+
+```
+
+
+```{r vis}
+
+plot(data2a$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (2a)")
+
+hist(data2a$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (2a)")
+
+library(ggplot2)
+ggplot(data2a, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (2a)")
+
+plot(data2b$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (2b)")
+
+hist(data2b$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (2b)")
+
+library(ggplot2)
+ggplot(data2b, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (2b)")
+
+```
+
+```{r vis3}
+
+plot(data3a$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (3a)")
+
+hist(data3a$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (3a)")
+
+library(ggplot2)
+ggplot(data3a, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (3a)")
+
+plot(data3b$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (3b)")
+
+hist(data3b$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (3b)")
+
+library(ggplot2)
+ggplot(data3b, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (3b)")
+
+
+```
+
+
+```{r vis4}
+
+plot(data4a$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (4a)")
+
+hist(data4a$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (4a)")
+
+library(ggplot2)
+ggplot(data4a, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (4a)")
+
+plot(data4b$V2, type = "l", xlab = "Time", ylab = "R-R Intervals", main = "Heartbeat Data Over Time (4b)")
+
+hist(data4b$V2, breaks = 30, xlab = "R-R Intervals", main = "Distribution of R-R Intervals (4b)")
+
+library(ggplot2)
+ggplot(data4b, aes(x = V2)) + geom_density(fill = "blue", alpha = 0.7) +
+  labs(x = "R-R Intervals", y = "Density", title = "Density Plot of R-R Intervals (4b)")
+
+
+```
+
+```{r modeling, warning = FALSE}
+library(stats)
+rr1a <- data1a$V2
+
+lambda_est <- mean(rr1a)
+
+cat("Estimated rate parameter (lambda):", lambda_est, "\n")
+
+simulated_spike_train <- rpois(length(rr1a), lambda = lambda_est)
+
+par(mfrow = c(2, 1))
+plot(rr1a, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'R-R Intervals',
+     main = 'Observed R-R Intervals')
+
+plot(simulated_spike_train, type = 'b', col = 'red', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train',
+     main = 'Simulated Poisson Process')
+
+par(mfrow = c(1, 1))
+
+
+# Perform KS test
+ks_result <- ks.test(rr1a, "pexp", rate = 1/lambda_est)
+
+# Display the results of the KS test
+cat("KS Test Results:\n")
+print(ks_result)
+
+```
+
+DISTRIBUTIONS NOT IDENTICAL. POISSON PROCESS IS NOT A GOOD FIT.
+
+
+```{r model1b, warning = FALSE}
+# Load the required library
+library(stats)
+
+# Extract the R-R intervals from the second column and rename the variable
+rr1b <- data1b$V2
+
+# Calculate the mean R-R interval as an estimate for the rate parameter (lambda)
+lambda_est_b <- mean(rr1b)
+
+# Display the estimated rate parameter
+cat("Estimated rate parameter (lambda) for rr1b:", lambda_est_b, "\n")
+
+# Simulate a Poisson process based on the estimated lambda
+simulated_spike_train_b <- rpois(length(rr1b), lambda = lambda_est_b)
+
+# Plot the observed R-R intervals and the simulated spike train for rr1b
+par(mfrow = c(2, 1))
+plot(rr1b, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'R-R Intervals',
+     main = 'Observed R-R Intervals for rr1b')
+
+plot(simulated_spike_train_b, type = 'b', col = 'red', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train for rr1b',
+     main = 'Simulated Poisson Process for rr1b')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for rr1b
+ks_result_b <- ks.test(rr1b, "pexp", rate = 1/lambda_est_b)
+
+# Display the results of the KS test for rr1b
+cat("KS Test Results for rr1b:\n")
+print(ks_result_b)
+
+
+```
+
+```{r model2a, warning = FALSE}
+# Extract the R-R intervals from the second column and rename the variable
+rr2a <- data2a$V2
+
+# Calculate the mean R-R interval as an estimate for the rate parameter (lambda)
+lambda_est_2a <- mean(rr2a)
+
+# Display the estimated rate parameter
+cat("Estimated rate parameter (lambda) for rr2a:", lambda_est_2a, "\n")
+
+# Simulate a Poisson process based on the estimated lambda
+simulated_spike_train_2a <- rpois(length(rr2a), lambda = lambda_est_2a)
+
+# Plot the observed R-R intervals and the simulated spike train for rr2a
+par(mfrow = c(2, 1))
+plot(rr2a, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'R-R Intervals',
+     main = 'Observed R-R Intervals for rr2a')
+
+plot(simulated_spike_train_2a, type = 'b', col = 'red', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train for rr2a',
+     main = 'Simulated Poisson Process for rr2a')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for rr2a
+ks_result_2a <- ks.test(rr2a, "pexp", rate = 1/lambda_est_2a)
+
+# Display the results of the KS test for rr2a
+cat("KS Test Results for rr2a:\n")
+print(ks_result_2a)
+```
+
+```{r 2b, warning=FALSE}
+# Load data for subject 2b
+data2b <- read.table('data/subj2b.txt', header = FALSE)
+
+# Extract the R-R intervals from the second column and rename the variable
+rr2b <- data2b$V2
+
+# Calculate the mean R-R interval as an estimate for the rate parameter (lambda)
+lambda_est_2b <- mean(rr2b)
+
+# Display the estimated rate parameter
+cat("Estimated rate parameter (lambda) for rr2b:", lambda_est_2b, "\n")
+
+# Simulate a Poisson process based on the estimated lambda
+simulated_spike_train_2b <- rpois(length(rr2b), lambda = lambda_est_2b)
+
+# Plot the observed R-R intervals and the simulated spike train for rr2b
+par(mfrow = c(2, 1))
+plot(rr2b, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'R-R Intervals',
+     main = 'Observed R-R Intervals for rr2b')
+
+plot(simulated_spike_train_2b, type = 'b', col = 'red', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train for rr2b',
+     main = 'Simulated Poisson Process for rr2b')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for rr2b
+ks_result_2b <- ks.test(rr2b, "pexp", rate = 1/lambda_est_2b)
+
+# Display the results of the KS test for rr2b
+cat("KS Test Results for rr2b:\n")
+print(ks_result_2b)
+
+```
+
+
+## INHOMOGENOUS 1a
+```{r inhomog}
+# Load the required library
+library(stats)
+
+# Load data for subject 1a
+data1a <- read.table('data/subj1a.txt', header = FALSE)
+
+# Extract the R-R intervals from the second column and rename the variable
+rr1a <- data1a$V2
+
+# Create a time variable (assuming time increments of 1, adjust as needed)
+time <- 1:length(rr1a)
+
+# Fit a linear model to estimate the intensity function
+model <- lm(rr1a ~ time)
+
+# Extract the coefficients
+beta0 <- coef(model)[1]
+beta1 <- coef(model)[2]
+
+# Define the estimated intensity function
+lambda_est <- exp(beta0 + beta1 * time)
+
+# Simulate an inhomogeneous Poisson process based on the estimated intensity
+simulated_spike_train <- rpois(length(rr1a), lambda = lambda_est)
+
+# Plot the observed R-R intervals and the estimated intensity function
+par(mfrow = c(2, 1))
+plot(rr1a, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'R-R Intervals',
+     main = 'Observed R-R Intervals for rr1a')
+
+lines(time, lambda_est, col = 'red', lty = 2)
+legend("topright", legend = c("Observed", "Intensity Function"),
+       col = c("blue", "red"), lty = c(1, 2), cex = 0.8)
+
+# Plot the simulated inhomogeneous Poisson process
+plot(simulated_spike_train, type = 'b', col = 'green', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train',
+     main = 'Simulated Inhomogeneous Poisson Process')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for inhomogeneous Poisson process
+ks_result_inh <- ks.test(rr1a, lambda_est)
+
+# Display the results of the KS test for inhomogeneous Poisson process
+cat("KS Test Results for Inhomogeneous Poisson Process:\n")
+print(ks_result_inh)
+
+
+```
+
+
+
+```{r inhomB}
+# Load the required library
+library(stats)
+
+# Load data for subject 1b
+data1b <- read.table('data/subj1b.txt', header = FALSE)
+
+# Extract the R-R intervals from the second column and rename the variable
+rr1b <- data1b$V2
+
+# Create a time variable (assuming time increments of 1, adjust as needed)
+time <- 1:length(rr1b)
+
+# Fit a linear model to estimate the intensity function for rr1b
+model_rr1b <- lm(rr1b ~ time)
+
+# Extract the coefficients for rr1b
+beta0_rr1b <- coef(model_rr1b)[1]
+beta1_rr1b <- coef(model_rr1b)[2]
+
+# Define the estimated intensity function for rr1b
+lambda_est_rr1b <- exp(beta0_rr1b + beta1_rr1b * time)
+
+# Simulate an inhomogeneous Poisson process based on the estimated intensity for rr1b
+simulated_spike_train_rr1b <- rpois(length(rr1b), lambda = lambda_est_rr1b)
+
+# Plot the observed R-R intervals and the estimated intensity function for rr1b
+par(mfrow = c(2, 1))
+plot(rr1b, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'R-R Intervals',
+     main = 'Observed R-R Intervals for rr1b')
+
+lines(time, lambda_est_rr1b, col = 'red', lty = 2)
+legend("topright", legend = c("Observed", "Intensity Function"),
+       col = c("blue", "red"), lty = c(1, 2), cex = 0.8)
+
+# Plot the simulated inhomogeneous Poisson process for rr1b
+plot(simulated_spike_train_rr1b, type = 'b', col = 'green', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train',
+     main = 'Simulated Inhomogeneous Poisson Process for rr1b')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for inhomogeneous Poisson process for rr1b
+ks_result_inh_rr1b <- ks.test(rr1b, lambda_est_rr1b)
+
+# Display the results of the KS test for inhomogeneous Poisson process for rr1b
+cat("KS Test Results for Inhomogeneous Poisson Process for rr1b:\n")
+print(ks_result_inh_rr1b)
+
+```
+
+
+```{r logInA}
+# Load the required library
+library(stats)
+
+# Load data for subject 1a
+data1a <- read.table('data/subj1a.txt', header = FALSE)
+
+# Extract the R-R intervals from the second column and rename the variable
+rr1a <- data1a$V2
+
+# Create a time variable (assuming time increments of 1, adjust as needed)
+time <- 1:length(rr1a)
+
+# Transform R-R intervals to log(R-R)
+log_rr1a <- log(rr1a)
+
+# Remove non-positive values
+log_rr1a <- log_rr1a[log_rr1a > 0]
+
+# Check if there are still non-positive values
+if (any(log_rr1a <= 0)) {
+  stop("After log transformation, there are still non-positive values in log(R-R) intervals.")
+}
+
+# Make sure 'log_rr1a' and 'time' have the same length
+time <- time[1:length(log_rr1a)]
+
+# Fit a linear model to estimate the intensity function for log(R-R)
+model_log_rr1a <- lm(log_rr1a ~ time)
+
+# Extract the coefficients for log(R-R)
+beta0_log_rr1a <- coef(model_log_rr1a)[1]
+beta1_log_rr1a <- coef(model_log_rr1a)[2]
+
+# Define the estimated intensity function for log(R-R)
+lambda_est_log_rr1a <- exp(beta0_log_rr1a + beta1_log_rr1a * time)
+
+# Simulate an inhomogeneous Poisson process based on the estimated intensity for log(R-R)
+simulated_spike_train_log_rr1a <- rpois(length(log_rr1a), lambda = lambda_est_log_rr1a)
+
+# Plot the observed log(R-R) intervals and the estimated intensity function for log(R-R)
+par(mfrow = c(2, 1))
+plot(log_rr1a, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'log(R-R Intervals)',
+     main = 'Observed log(R-R) Intervals for rr1a')
+
+lines(time, lambda_est_log_rr1a, col = 'red', lty = 2)
+legend("topright", legend = c("Observed", "Intensity Function"),
+       col = c("blue", "red"), lty = c(1, 2), cex = 0.8)
+
+# Plot the simulated inhomogeneous Poisson process for log(R-R)
+plot(simulated_spike_train_log_rr1a, type = 'b', col = 'green', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train (log)',
+     main = 'Simulated Inhomogeneous Poisson Process for log(R-R)')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for inhomogeneous Poisson process for log(R-R)
+ks_result_inh_log_rr1a <- ks.test(log_rr1a, lambda_est_log_rr1a)
+
+# Display the results of the KS test for inhomogeneous Poisson process for log(R-R)
+cat("KS Test Results for Inhomogeneous Poisson Process for log(R-R) of rr1a:\n")
+print(ks_result_inh_log_rr1a)
+
+```
+
+
+```{r inhomLogB}
+# Load the required library
+library(stats)
+
+# Load data for subject 1b
+data1b <- read.table('data/subj1b.txt', header = FALSE)
+
+# Extract the R-R intervals from the second column and rename the variable
+rr1b <- data1b$V2
+
+# Create a time variable (assuming time increments of 1, adjust as needed)
+time <- 1:length(rr1b)
+
+# Transform R-R intervals to log(R-R)
+log_rr1b <- log(rr1b)
+
+# Remove non-positive values
+log_rr1b <- log_rr1b[log_rr1b > 0]
+
+# Check if there are still non-positive values
+if (any(log_rr1b <= 0)) {
+  stop("After log transformation, there are still non-positive values in log(R-R) intervals.")
+}
+
+# Make sure 'log_rr1b' and 'time' have the same length
+time <- time[1:length(log_rr1b)]
+
+# Fit a linear model to estimate the intensity function for log(R-R) of rr1b
+model_log_rr1b <- lm(log_rr1b ~ time)
+
+# Extract the coefficients for log(R-R) of rr1b
+beta0_log_rr1b <- coef(model_log_rr1b)[1]
+beta1_log_rr1b <- coef(model_log_rr1b)[2]
+
+# Define the estimated intensity function for log(R-R) of rr1b
+lambda_est_log_rr1b <- exp(beta0_log_rr1b + beta1_log_rr1b * time)
+
+# Simulate an inhomogeneous Poisson process based on the estimated intensity for log(R-R) of rr1b
+simulated_spike_train_log_rr1b <- rpois(length(log_rr1b), lambda = lambda_est_log_rr1b)
+
+# Plot the observed log(R-R) intervals and the estimated intensity function for log(R-R) of rr1b
+par(mfrow = c(2, 1))
+plot(log_rr1b, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'log(R-R Intervals)',
+     main = 'Observed log(R-R) Intervals for rr1b')
+
+lines(time, lambda_est_log_rr1b, col = 'red', lty = 2)
+legend("topright", legend = c("Observed", "Intensity Function"),
+       col = c("blue", "red"), lty = c(1, 2), cex = 0.8)
+
+# Plot the simulated inhomogeneous Poisson process for log(R-R) of rr1b
+plot(simulated_spike_train_log_rr1b, type = 'b', col = 'green', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train (log)',
+     main = 'Simulated Inhomogeneous Poisson Process for log(R-R) of rr1b')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for inhomogeneous Poisson process for log(R-R) of rr1b
+ks_result_inh_log_rr1b <- ks.test(log_rr1b, lambda_est_log_rr1b)
+
+# Display the results of the KS test for inhomogeneous Poisson process for log(R-R) of rr1b
+cat("KS Test Results for Inhomogeneous Poisson Process for log(R-R) of rr1b:\n")
+print(ks_result_inh_log_rr1b)
+
+```
+
+
+
+
+
+
+
+
+```{r log}
+library(stats)
+
+# Transform R-R intervals to log(R-R)
+log_rr1a <- log(rr1a)
+
+# Remove non-positive values
+log_rr1a <- log_rr1a[log_rr1a > 0]
+
+# Check if there are still non-positive values
+if (any(log_rr1a <= 0)) {
+  stop("After log transformation, there are still non-positive values in log(R-R) intervals.")
+}
+
+# Estimate rate parameter for the transformed data
+lambda_est_log <- mean(log_rr1a)
+
+cat("Estimated rate parameter (lambda) for log(R-R):", lambda_est_log, "\n")
+
+# Simulate Poisson process for log(R-R)
+simulated_spike_train_log <- rpois(length(log_rr1a), lambda = lambda_est_log)
+
+# Plot the observed log(R-R) intervals and the simulated spike train
+par(mfrow = c(2, 1))
+plot(log_rr1a, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'log(R-R Intervals)',
+     main = 'Observed log(R-R) Intervals')
+
+plot(simulated_spike_train_log, type = 'b', col = 'red', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train (log)',
+     main = 'Simulated Poisson Process for log(R-R)')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for log(R-R)
+ks_result_log <- ks.test(log_rr1a, "pexp", rate = 1/lambda_est_log)
+
+# Display the results of the KS test for log(R-R)
+cat("KS Test Results for log(R-R):\n")
+print(ks_result_log)
+
+
+```
+
+
+```{r 1bLOG}
+library(stats)
+
+# Transform R-R intervals to log(R-R) for rr1b
+log_rr1b <- log(rr1b)
+
+# Remove non-positive values
+log_rr1b <- log_rr1b[log_rr1b > 0]
+
+# Check if there are still non-positive values
+if (any(log_rr1b <= 0)) {
+  stop("After log transformation, there are still non-positive values in log(R-R) intervals.")
+}
+
+# Estimate rate parameter for the transformed data
+lambda_est_log_rr1b <- mean(log_rr1b)
+
+cat("Estimated rate parameter (lambda) for log(R-R) of rr1b:", lambda_est_log_rr1b, "\n")
+
+# Simulate Poisson process for log(R-R) of rr1b
+simulated_spike_train_log_rr1b <- rpois(length(log_rr1b), lambda = lambda_est_log_rr1b)
+
+# Plot the observed log(R-R) intervals for rr1b and the simulated spike train
+par(mfrow = c(2, 1))
+plot(log_rr1b, type = 'b', col = 'blue', pch = 20,
+     xlab = 'Time', ylab = 'log(R-R Intervals)',
+     main = 'Observed log(R-R) Intervals for rr1b')
+
+plot(simulated_spike_train_log_rr1b, type = 'b', col = 'red', pch = 20,
+     xlab = 'Time', ylab = 'Simulated Spike Train (log)',
+     main = 'Simulated Poisson Process for log(R-R) of rr1b')
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+# Perform KS test for log(R-R) of rr1b
+ks_result_log_rr1b <- ks.test(log_rr1b, "pexp", rate = 1/lambda_est_log_rr1b)
+
+# Display the results of the KS test for log(R-R) of rr1b
+cat("KS Test Results for log(R-R) of rr1b:\n")
+print(ks_result_log_rr1b)
+
+```
+
+
+
+
+
+
+```{r logPlot}
+
+plot(log_rr1a, type = "l", xlab = "Time", ylab = "log(R-R Intervals)", main = "Heartbeat Data Over Time (log1a)")
+
+```
+
+```{r ts}
+library(forecast)
+
+res <- auto.arima(log_rr1a)
+
+plot(res)
+
+# Plot the original time series data
+plot(log_rr1a, main = "Original Time Series Data", ylab = "Values")
+
+# Add the fitted values to the plot
+lines(fitted(res), col = "red")
+legend("topleft", legend = c("Original", "Fitted"), col = c("black", "red"), lty = 1)
+
+
+summary(res)
+
+
+```
+
+
+```{r adf}
+library(tseries)
+# ADF test for rr1a
+adf_result_rr1a <- adf.test(rr1a)
+cat("ADF Test Results for rr1a:\n")
+print(adf_result_rr1a)
+
+# ADF test for rr1b
+adf_result_rr1b <- adf.test(rr1b)
+cat("\nADF Test Results for rr1b:\n")
+print(adf_result_rr1b)
+
+
+```
+
+```{r acf}
+# ACF and PACF for rr1a
+par(mfrow = c(2, 2))  # Set up a 2x2 plotting layout
+
+# ACF plot for rr1a
+acf_rr1a <- acf(rr1a, main = "ACF for rr1a")
+
+# PACF plot for rr1a
+pacf_rr1a <- pacf(rr1a, main = "PACF for rr1a")
+
+# ACF and PACF for rr1b
+# Reset plotting layout before creating new plots
+par(mfrow = c(1, 1))
+
+par(mfrow = c(2, 2))  # Set up a 2x2 plotting layout
+
+# ACF plot for rr1b
+acf_rr1b <- acf(rr1b, main = "ACF for rr1b")
+
+# PACF plot for rr1b
+pacf_rr1b <- pacf(rr1b, main = "PACF for rr1b")
+
+# Reset plotting layout
+par(mfrow = c(1, 1))
+
+```
+
+
+```{r tsB}
+# Transform R-R intervals to log(R-R)
+log_rr1b <- log(rr1b)
+
+resb <- auto.arima(log_rr1b)
+
+plot(resb)
+
+# Plot the original time series data
+plot(log_rr1b, main = "Original Time Series Data", ylab = "Values")
+
+# Add the fitted values to the plot
+lines(fitted(resb), col = "red")
+legend("topleft", legend = c("Original", "Fitted"), col = c("black", "red"), lty = 1)
+
+
+summary(resb)
+
+```
+
+```{r nolog}
+
+library(forecast)
+
+res1a <- auto.arima(rr1a)
+
+plot(res1a)
+
+# Plot the original time series data
+plot(rr1a, main = "Original Time Series Data", ylab = "Values")
+
+# Add the fitted values to the plot
+lines(fitted(res1a), col = "red")
+legend("topleft", legend = c("Original", "Fitted"), col = c("black", "red"), lty = 1)
+
+
+summary(res1a)
+
+tsdiag(res1a)
+
+
+```
+
+```{r res1b}
+library(forecast)
+
+res1b <- auto.arima(rr1b)
+
+plot(res1b)
+
+# Plot the original time series data
+plot(rr1b, main = "Original Time Series Data", ylab = "Values")
+
+# Add the fitted values to the plot
+lines(fitted(res1b), col = "red")
+legend("topleft", legend = c("Original", "Fitted"), col = c("black", "red"), lty = 1)
+
+
+summary(res1b)
+
+tsdiag(res1b)
+
+```
+
+
+
+```{r decp}
+
+spec_result <- spec.pgram(rr1a, taper = 0, log = "no", span =c(3,5))
+
+plot(spec_result, main = "Spectral Density Plot")
+
+spec_resultb <- spec.pgram(rr1b, taper = 0, log = "no", span =c(3,5))
+
+plot(spec_resultb, main = "Spectral Density Plot")
+
+```
+
+
+```{r des}
+spec <- spectrum(log_rr1a)
+
+# Plot the results
+plot(spec, main = "Spectral Density Plot")
+
+```
+
+```{r test}
+library(invGauss)
+rr1a2 <- data.frame(rr1a)
+res <- invGauss(formula.mu = Surv(time, data1a$V2) ~ 1, data = rr1a2)
+summary(res)
+
+```
+
+```{r glm}
+
+glm_model <- glm(V2 ~ V1, data = data1a, family = inverse.gaussian)
+
+summary(glm_model)
+
+plot(glm_model)
+
+
+```
+
+```{r glmB}
+
+glm_modelb <- glm(V2 ~ V1, data = data1b, family = inverse.gaussian)
+
+summary(glm_modelb)
+
+plot(glm_modelb)
+
+
+```
+
+
+```{r lag}
+
+# Create a lagged variable for the R-R intervals
+data1a$lagged_RR <- c(NA, head(data1a$V2, -1))
+
+#data1a$loga <- (log(data1a$V2))
+
+# Fit a GLM with spiking history
+glm_model <- glm(V2 ~ V1, data = data1a, family = Gamma)
+
+# Display the model summary
+summary(glm_model)
+
+# Plot the model
+plot(glm_model)
+
+```
+
+```{r lagA}
+
+# Create a lagged variable for the R-R intervals
+data1a$lagged_RR <- c(NA, head(data1a$V2, -1))
+
+
+# Fit a GLM with spiking history
+glm_modelA <- glm(V2 ~ V1 + lagged_RR, data = data1a, family = inverse.gaussian)
+
+# Display the model summary
+summary(glm_modelA)
+
+# Plot the model
+plot(glm_modelA)
+
+```
+
+
+```{r nlag}
+
+# Number of lags
+num_lags <- 5
+
+# Create lagged variables for the R-R intervals
+for (lag in 1:num_lags) {
+  col_name <- paste0("lagged_RR_", lag)
+  data1a[, col_name] <- c(rep(NA, lag), head(data1a$V2, -lag))
+}
+
+# Fit a GLM with spiking history using all lagged variables
+formula <- as.formula(paste("V2 ~ V1 +", paste0("lagged_RR_", 1:num_lags, collapse = " + ")))
+glm_modelA <- glm(formula, data = data1a, family = inverse.gaussian)
+
+# Display the model summary
+summary(glm_modelA)
+
+# Plot the model
+plot(glm_modelA)
+
+```
+
+```{r nlagb}
+# Number of lags
+num_lags <- 5
+
+# Create lagged variables for the R-R intervals for data1b
+for (lag in 1:num_lags) {
+  col_name <- paste0("lagged_RR_", lag)
+  data1b[, col_name] <- c(rep(NA, lag), head(data1b$V2, -lag))
+}
+
+# Fit a GLM with spiking history using all lagged variables for data1b
+formula_b <- as.formula(paste("V2 ~ V1 +", paste0("lagged_RR_", 1:num_lags, collapse = " + ")))
+glm_modelB <- glm(formula_b, data = data1b, family = inverse.gaussian)
+
+# Display the model summary for data1b
+summary(glm_modelB)
+
+# Plot the model for data1b
+plot(glm_modelB)
+
+
+```
+
+
+
+
+
+
